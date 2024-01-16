@@ -1,32 +1,54 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Table, Date
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy import create_engine
 from eralchemy2 import render_er
 
+
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
-    id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+class User(Base):
+    __tablename__ = 'USERS'
+    user_id = Column(Integer, primary_key=True)
+    user_username = Column(String, primary_key=True)
+    user_name = Column(String(250), nullable=False)
+    
+    user_followers = relationship('Follower', back_populates='follower_who')
+    
 
-    def to_dict(self):
-        return {}
+class Post(Base):
+    __tablename__ = 'POSTS'
+    post_id = Column(Integer, primary_key=True)
+    post_user_id = Column(String, ForeignKey('USERS.user_id'), nullable=False)
+    post_image = Column(String(250), nullable=False)
+    post_description = Column(String(500), nullable=False)
+    
+    post_comments = relationship('Comment', back_populates='comment_from_post')
+    
+
+class Comment(Base):
+    __tablename__ = 'COMMENTS'
+    commnent_id = Column(Integer, primary_key=True)
+    comment_user_id = Column(String, ForeignKey('USERS.user_id'), nullable=False)
+    comment_post = Column(Integer, ForeignKey('POSTS.post_id'), nullable=False)
+    comment_content = Column(String(500), nullable=False)
+    comment_date = Column(Date, nullable=False)
+    
+    comment_from_post = relationship('Post', back_populates='post_comments')
+    
+
+
+class Follower(Base):
+    __tablename__ = 'FOLLOWERS'
+    follower_id = Column(Integer, ForeignKey('USERS.user_id'), primary_key=True)
+    follower_user = Column(Integer, ForeignKey('USERS.user_id'), primary_key=True)
+    follower_date_start = Column(Date)
+
+    follower_who = relationship('User', back_populates='user_followers')
+
+
 
 ## Draw from SQLAlchemy base
 try:
