@@ -11,42 +11,43 @@ Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'USERS'
-    user_id = Column(Integer, primary_key=True)
-    user_username = Column(String, primary_key=True)
-    user_name = Column(String(250), nullable=False)
+    users_id = Column(Integer, primary_key=True)
+    users_username = Column(String, primary_key=True)
+    users_name = Column(String(250), nullable=False)
     
-    user_followers = relationship('Follower', back_populates='follower_who')
+    users_followers = relationship('Follower', back_populates='follower_who')
     
 
 class Post(Base):
     __tablename__ = 'POSTS'
-    post_id = Column(Integer, primary_key=True)
-    post_user_id = Column(String, ForeignKey('USERS.user_id'), nullable=False)
-    post_image = Column(String(250), nullable=False)
-    post_description = Column(String(500), nullable=False)
+    posts_id = Column(Integer, primary_key=True)
+    posts_user_id = Column(String, ForeignKey('USERS.user_id'), nullable=False)
+    posts_image = Column(String(250), nullable=False)
+    posts_description = Column(String(500), nullable=False)
     
-    post_comments = relationship('Comment', back_populates='comment_from_post')
+    posts_comments = relationship('Comment', back_populates='comment_from_post')
     
 
 class Comment(Base):
     __tablename__ = 'COMMENTS'
-    commnent_id = Column(Integer, primary_key=True)
-    comment_user_id = Column(String, ForeignKey('USERS.user_id'), nullable=False)
-    comment_post = Column(Integer, ForeignKey('POSTS.post_id'), nullable=False)
-    comment_content = Column(String(500), nullable=False)
-    comment_date = Column(Date, nullable=False)
+    comments_id = Column(Integer, primary_key=True)
+    comments_user_id = Column(String, ForeignKey('USERS.user_id'), nullable=False)
+    comments_post = Column(Integer, ForeignKey('POSTS.post_id'), nullable=False)
+    comments_content = Column(String(500), nullable=False)
+    comments_date = Column(Date, nullable=False)
     
-    comment_from_post = relationship('Post', back_populates='post_comments')
+    comments_from_post = relationship('Post', back_populates='post_comments')
     
 
 
 class Follower(Base):
     __tablename__ = 'FOLLOWERS'
-    follower_id = Column(Integer, ForeignKey('USERS.user_id'), primary_key=True)
-    follower_user = Column(Integer, ForeignKey('USERS.user_id'), primary_key=True)
-    follower_date_start = Column(Date)
+    followers_id = Column(Integer, primary_key=True, autoincrement=True)
+    followers_user = Column(Integer, ForeignKey('USERS.user_id'))
+    followers_follower = Column(Integer, ForeignKey('USERS.user_id'))
+    followers_date_start = Column(Date)
 
-    follower_who = relationship('User', back_populates='user_followers')
+    followers_who = relationship('User', back_populates='user_followers')
 
 
 
